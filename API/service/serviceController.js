@@ -214,7 +214,7 @@ exports.removeServiceFromSpecialist = async (req, res, next) => {
         },
       });
       if (checkSpecialistService) {
-        await SpecialistServices.destroy({ Deleted: checkSpecialistService });
+        await checkSpecialistService.destroy();
         res.status(200).json({
           message: "This service has been removed from this specialist",
         });

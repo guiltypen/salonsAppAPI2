@@ -58,12 +58,12 @@ db.Category.belongsTo(db.Salon, {
 db.Salon.belongsToMany(db.User, {
   foreignKey: "salonId",
   as: "salons",
-  through: "Booking",
+  through: "Bookings",
 });
 db.User.belongsToMany(db.Salon, {
   foreignKey: "userId",
   as: "users",
-  through: "Booking",
+  through: "Bookings",
 });
 
 //Category and Service (One to many)
@@ -78,12 +78,12 @@ db.Service.belongsTo(db.Category, {
 // Service and specialist relation
 db.Service.belongsToMany(db.User, {
   foreignKey: "serviceId",
-  as: "services",
+  // as: "services",
   through: "SpecialistServices",
 });
 db.User.belongsToMany(db.Service, {
   foreignKey: { name: "specialistId", allowNull: false },
-  as: "specialists",
+  // as: "specialists",
   through: "SpecialistServices",
 });
 

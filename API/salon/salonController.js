@@ -58,8 +58,12 @@ exports.signin = (req, res, next) => {
       role: user.role,
       exp: Date.now() + parseInt(JWT_EXPIRATION_MS),
     };
-    const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
-    res.json({ token: token });
+    if (req.user.role === "salon") {
+      const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
+      res.json({ token: token });
+    } else {
+      res.status(400).json({ message: "Only salons can sign in" });
+    }
   } catch (error) {
     next(error);
   }
@@ -128,8 +132,10 @@ exports.updateSalon = async (req, res, next) => {
         // req.body.image = `/media/${req.file.filename}`;
         req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
       }
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-      req.body.password = hashedPassword;
+      if (req.body.password) {
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        req.body.password = hashedPassword;
+      }
       await req.salon.update(req.body);
       res.status(200).json({ message: "Salon info has been updated" });
     } else {

@@ -58,7 +58,8 @@ router.get(
 // Update user
 router.put(
   "/:userId",
-  passport.authenticate("jwt", upload.single("image"), { session: false }),
+  passport.authenticate("jwt", { session: false }),
+  upload.single("image"),
   updateInfo
 );
 

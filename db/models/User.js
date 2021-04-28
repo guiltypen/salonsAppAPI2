@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
     },
     phone: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
       unique: {
         args: true,
@@ -58,6 +58,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     salonId: {
       type: DataTypes.STRING,
+      // type: DataTypes.INTEGER,
     },
   });
 

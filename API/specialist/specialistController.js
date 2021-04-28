@@ -1,4 +1,4 @@
-const { User } = require("../../db/models");
+const { User, SpecialistServices } = require("../../db/models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET, JWT_EXPIRATION_MS } = require("../../db/config/keys");
@@ -13,6 +13,15 @@ exports.fetchSpecialists = async (req, res, next) => {
       attributes: {
         exclude: ["createdAt", "updatedAt", "password"],
       },
+      // include: [
+      //   {
+      //     model: SpecialistServices,
+      //     as: "specialistServices",
+      //     attributes: {
+      //       exclude: ["createdAt", "updatedAt"],
+      //     },
+      //   },
+      // ],
     });
     if (foundSpecialists) {
       res.status(200).json(foundSpecialists);
@@ -68,6 +77,39 @@ exports.addSpecialistInSalon = async (req, res, next) => {
       const err = new Error("Only this salon manager can add new specialist");
       err.status = 401;
       res.json({ message: err.message });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Deleting a user
+exports.deleteSpecialistFromSalon = async (req, res, next) => {
+  const salonId = req.user.id;
+  const { specialistId } = req.params;
+  try {
+    if (req.user.role === "salon") {
+      const checkSpecialist = await User.findOne({
+        where: {
+          id: specialistId,
+          role: "specialist",
+          salonId: `${salonId}`,
+        },
+      });
+      if (checkSpecialist) {
+        await checkSpecialist.destroy();
+        res
+          .status(200)
+          .json({ message: "specialist account has been deleted" });
+      } else {
+        res
+          .status(400)
+          .json({ message: "This specialist was not found in your salon" });
+      }
+    } else {
+      res.status(400).json({
+        message: "Only this salon manager can delete this account",
+      });
     }
   } catch (error) {
     next(error);
