@@ -1,11 +1,11 @@
 module.exports = (sequelize, DataTypes) => {
   const SpecialistServices = sequelize.define("SpecialistServices", {
     salonId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     categoryId: {
-      type: DataTypes.STRING,
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
     serviceName: {

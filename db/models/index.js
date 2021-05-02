@@ -57,12 +57,10 @@ db.Category.belongsTo(db.Salon, {
 // Salon and customer relation
 db.Salon.belongsToMany(db.User, {
   foreignKey: "salonId",
-  as: "salons",
   through: "Bookings",
 });
 db.User.belongsToMany(db.Salon, {
-  foreignKey: "userId",
-  as: "users",
+  foreignKey: "customerId",
   through: "Bookings",
 });
 
@@ -105,5 +103,14 @@ db.SpecialistServices.belongsTo(db.Service, {
 //   foreignKey: "salonId",
 //   as: "salon",
 // });
+
+//User and Timeslots (One to many)
+db.User.hasMany(db.Timeslots, {
+  foreignKey: { name: "specialistId", allowNull: false },
+  as: "Timeslots",
+});
+db.Timeslots.belongsTo(db.User, {
+  foreignKey: "specialistId",
+});
 
 module.exports = db;

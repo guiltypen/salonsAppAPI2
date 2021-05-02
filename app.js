@@ -12,6 +12,7 @@ const userRoutes = require("./API/user/userRoutes");
 const categoryRoutes = require("./API/category/categoryRoutes");
 const specialistRoutes = require("./API/specialist/specialistRoutes");
 const serviceRoutes = require("./API/service/serviceRoutes");
+const bookingRoutes = require("./API/bookings/bookingRoutes");
 
 // init app
 const app = express();
@@ -30,6 +31,7 @@ app.use("/users", userRoutes);
 app.use("/categories", categoryRoutes);
 app.use("/specialists", specialistRoutes);
 app.use("/services", serviceRoutes);
+app.use("/bookings", bookingRoutes);
 
 // Errors handler middlewre
 app.use((err, req, res, next) => {

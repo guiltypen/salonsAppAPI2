@@ -38,7 +38,22 @@ exports.createServiceInCategorey = async (req, res, next) => {
           ...req.body,
           salonId: req.user.id,
         });
-        res.status(201).json(newService);
+        const postedService = await Service.findOne({
+          newService,
+          attributes: {
+            exclude: ["createdAt", "updatedAt"],
+          },
+          include: [
+            {
+              model: SpecialistServices,
+              as: "specialistServices",
+              attributes: {
+                exclude: ["createdAt", "updatedAt"],
+              },
+            },
+          ],
+        });
+        res.status(201).json(postedService);
       } else {
         const err = new Error("This service already exist in your salon");
         err.status = 401;
@@ -166,7 +181,7 @@ exports.assignServiceToSpecialist = async (req, res, next) => {
           where: {
             serviceId: serviceId,
             specialistId: specialistId,
-            salonId: `${salonId}`,
+            salonId: salonId,
           },
         });
         if (!checkSpecialistService) {
@@ -210,7 +225,7 @@ exports.removeServiceFromSpecialist = async (req, res, next) => {
         where: {
           serviceId: serviceId,
           specialistId: specialistId,
-          salonId: `${salonId}`,
+          salonId: salonId,
         },
       });
       if (checkSpecialistService) {

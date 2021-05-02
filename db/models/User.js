@@ -50,15 +50,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       uniqe: true,
     },
-    timeslots: {
-      type: DataTypes.INTEGER,
-    },
+    // timeslots: {
+    //   type: DataTypes.INTEGER,
+    // },
     image: {
       type: DataTypes.STRING,
     },
     salonId: {
-      type: DataTypes.STRING,
-      // type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER,
     },
   });
 
