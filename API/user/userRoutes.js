@@ -54,7 +54,6 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   getUserById
 );
-
 // Update user
 router.put(
   "/:userId",
@@ -62,7 +61,6 @@ router.put(
   upload.single("image"),
   updateInfo
 );
-
 // Delete a user
 router.delete(
   "/:userId",

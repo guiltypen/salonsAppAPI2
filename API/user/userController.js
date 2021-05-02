@@ -97,17 +97,16 @@ exports.getUsersList = async (req, res) => {
 exports.getUserById = async (req, res, next) => {
   const { userId } = req.params;
   try {
-    if (req.user.role === "admin") {
-      const foundUser = await User.findByPk(userId);
-      res.status(200).json({ foundUser: foundUser });
-    } else {
-      res.status(400).json({ message: "Only admins can view users" });
-    }
+    // if (req.user.role === "admin") {
+    const foundUser = await User.findByPk(userId);
+    res.status(200).json({ foundUser: foundUser });
+    // } else {
+    //   res.status(400).json({ message: "Only admins can view users" });
+    // }
   } catch (error) {
     next(error);
   }
 };
-
 // update user info
 exports.updateInfo = async (req, res, next) => {
   const { userId } = req.params;
@@ -116,7 +115,7 @@ exports.updateInfo = async (req, res, next) => {
   try {
     if (req.user.id === +userId) {
       if (req.file) {
-        // req.body.image = `/media/${req.file.filename}`;
+        // req.body.image = /media/${req.file.filename};
         req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
       }
       if (req.body.password) {
