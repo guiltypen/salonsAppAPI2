@@ -1,4 +1,4 @@
-const { Salon, Category, Service } = require("../../db/models");
+const { Salon, Category, Service, Bookings } = require("../../db/models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET, JWT_EXPIRATION_MS } = require("../../db/config/keys");
@@ -28,7 +28,12 @@ exports.addSalonAcc = async (req, res, next) => {
       const payload = {
         id: newSalon.id,
         username: newSalon.username,
+        owner: newSalon.owner,
+        email: newSalon.email,
+        phone: newSalon.phone,
+        address: newSalon.address,
         gender: newSalon.gender,
+        image: newSalon.image,
         role: newSalon.role,
         exp: Date.now() + parseInt(JWT_EXPIRATION_MS),
       };
@@ -75,7 +80,7 @@ exports.getTokenInfo = (req, res, next) => {
 };
 
 // Salons list controller
-exports.getSalonsList = async (req, res) => {
+exports.getSalonsList = async (req, res, next) => {
   try {
     const salons = await Salon.findAll({
       attributes: {
@@ -100,9 +105,9 @@ exports.getSalonsList = async (req, res) => {
         },
       ],
     });
-    res.json(salons);
+    res.status(200).json(salons);
   } catch (error) {
-    res.status(500).json("No salons found");
+    next(error);
   }
 };
 
@@ -136,8 +141,8 @@ exports.updateSalon = async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds);
         req.body.password = hashedPassword;
       }
-      await req.salon.update(req.body);
-      res.status(200).json({ message: "Salon info has been updated" });
+      const updatedInfo = await req.salon.update(req.body);
+      res.status(200).json(updatedInfo);
     } else {
       res.status(400).json({
         message: "Only this salon manager can update this salon info",

@@ -1,4 +1,4 @@
-const { User } = require("../../db/models");
+const { User, Bookings } = require("../../db/models");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const { JWT_SECRET, JWT_EXPIRATION_MS } = require("../../db/config/keys");
@@ -19,7 +19,8 @@ exports.signup = async (req, res, next) => {
   const { password } = req.body;
   try {
     if (req.file) {
-      req.body.image = `media/${req.file.filename}`;
+      // req.body.image = `media/${req.file.filename}`;
+      req.body.image = `http://${req.get("host")}/media/${req.file.filename}`;
     }
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     req.body.password = hashedPassword;
@@ -33,6 +34,7 @@ exports.signup = async (req, res, next) => {
       phone: newUser.phone,
       firstName: newUser.firstName,
       lastName: newUser.lastName,
+      image: newUser.image,
       exp: Date.now() + JWT_EXPIRATION_MS,
     };
     const token = jwt.sign(JSON.stringify(payload), JWT_SECRET);
@@ -55,6 +57,7 @@ exports.signin = (req, res) => {
       phone: user.phone,
       firstName: user.firstName,
       lastName: user.lastName,
+      image: user.image,
       exp: Date.now() + parseInt(JWT_EXPIRATION_MS),
     };
     if (req.user.role === "customer" || "specialist") {
@@ -76,7 +79,7 @@ exports.getTokenInfo = (req, res, next) => {
 };
 
 // Users list controller
-exports.getUsersList = async (req, res) => {
+exports.getUsersList = async (req, res, next) => {
   try {
     if (req.user.role === "admin") {
       const users = await User.findAll({
@@ -89,7 +92,7 @@ exports.getUsersList = async (req, res) => {
       res.status(400).json({ message: "Only admins can view users list" });
     }
   } catch (error) {
-    res.status(500).json("No users found");
+    next(error);
   }
 };
 
